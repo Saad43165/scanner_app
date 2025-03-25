@@ -16,30 +16,22 @@ class MedicineScanPage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.navy),
-          onPressed: () {
-            // Navigate back to the previous screen
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Scan Result - 01 Nov 2020',
+          style: TextStyle(
+            color: AppColors.navy,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit_calendar_rounded, color: AppColors.textDark),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.print, color: AppColors.textDark),
-            onPressed: () {},
+            icon: Icon(Icons.share, color: AppColors.primary),
+            onPressed: () => _sharePDF(context),
           ),
         ],
-        title: const Text(
-          'Scan 01:11:2020 03...',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 19,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: false,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -47,78 +39,161 @@ class MedicineScanPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Scan Preview
               Container(
-                height: 200,
+                height: 180,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                    image: AssetImage('assets/medicine_scan_image.png'),
-                    fit: BoxFit.cover,
-                  ),
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                '4 Medicines Found!',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              SizedBox(height: 16),
-              Column(
-                children: medicines.map((medicine) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        medicine,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Icon(Icons.document_scanner, size: 50, color: AppColors.primary),
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'SCAN RESULT',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Search for Uses',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
+                  ],
                 ),
               ),
-              SizedBox(height: 90),
+              SizedBox(height: 24),
+
+              // Medicines List Header
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.add_circle_outline, color: AppColors.textDark),
-                    onPressed: () {},
+                  Text(
+                    'Detected Medicines',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.navy,
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.share, color: AppColors.textDark),
-                    onPressed: () => _sharePDF(context),
+                  Text(
+                    '${medicines.length} items',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: AppColors.textDark),
-                    onPressed: () {},
+                ],
+              ),
+              SizedBox(height: 16),
+
+              // Medicines List
+              ...medicines.map((medicine) => Container(
+                margin: EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  leading: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.medication_liquid, size: 20, color: AppColors.primary),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: AppColors.textDark),
-                    onPressed: () {},
+                  title: Text(
+                    medicine,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.navy,
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, size: 20, color: AppColors.primary),
+                        onPressed: () => _editMedicine(medicine),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, size: 20, color: Colors.red),
+                        onPressed: () => _deleteMedicine(medicine),
+                      ),
+                    ],
+                  ),
+                ),
+              )),
+              SizedBox(height: 24),
+
+              // Action Buttons
+              Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.search, size: 22, color: Colors.white),
+                      label: Text(
+                        'Search Uses',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: Icon(Icons.add, size: 20, color: AppColors.primary),
+                          label: Text('Add New'),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            side: BorderSide(color: AppColors.primary),
+                          ),
+                          onPressed: () {},
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: Icon(Icons.download, size: 20, color: AppColors.primary),
+                          label: Text('Save PDF'),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            side: BorderSide(color: AppColors.primary),
+                          ),
+                          onPressed: () => _sharePDF(context),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -129,39 +204,39 @@ class MedicineScanPage extends StatelessWidget {
     );
   }
 
-  /// Function to generate a PDF file
-  Future<File> _generatePDF() async {
-    final pdf = pw.Document();
-
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text("Medicines Found:", style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 10),
-              for (String medicine in medicines) pw.Text(medicine, style: pw.TextStyle(fontSize: 16)),
-            ],
-          );
-        },
-      ),
-    );
-
-    final output = await getTemporaryDirectory();
-    final file = File("${output.path}/medicines.pdf");
-    await file.writeAsBytes(await pdf.save());
-    return file;
+  void _editMedicine(String medicine) {
+    // Implement edit functionality
   }
 
-  /// Function to generate and share the PDF
+  void _deleteMedicine(String medicine) {
+    // Implement delete functionality
+  }
+
+  Future<File> _generatePDF() async {
+    final pdf = pw.Document();
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text("Medicines Found:", style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 10),
+            ...medicines.map((medicine) => pw.Text(medicine, style: pw.TextStyle(fontSize: 16))),
+          ],
+        ),
+      ),
+    );
+    final output = await getTemporaryDirectory();
+    return File("${output.path}/medicines.pdf")..writeAsBytesSync(await pdf.save());
+  }
+
   Future<void> _sharePDF(BuildContext context) async {
     try {
       final file = await _generatePDF();
-      Share.shareXFiles([XFile(file.path)], text: "Medicines List PDF");
+      await Share.shareXFiles([XFile(file.path)], text: "Medicines List PDF");
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error generating PDF: $e")),
+        SnackBar(content: Text("Error sharing PDF: ${e.toString()}")),
       );
     }
   }

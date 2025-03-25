@@ -19,19 +19,30 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      shape: CircularNotchedRectangle(),
+      shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: Container(
-        height: 100.0,
+        height: 40.0, // Reduced height to prevent overflow
+        padding: const EdgeInsets.symmetric(horizontal: 10.0), // Added horizontal padding
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, -2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildNavItem(Icons.home, 0, "Home"),
+            const SizedBox(width: 48), // Space for FAB
             _buildNavItem(Icons.qr_code_scanner, 1, "Scan"),
+            const SizedBox(width: 48), // Space for FAB
             _buildNavItem(Icons.person, 2, "Profile"),
           ],
         ),
@@ -43,32 +54,42 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
     bool isSelected = widget.currentIndex == index;
     return GestureDetector(
       onTap: () => widget.onTap(index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            height: 40,  // Keep height fixed
-            width: 40,   // Keep width fixed
-            alignment: Alignment.center,
-            child: Icon(
-              icon,
-              color: isSelected ? Colors.black : AppColors.navy,
-              size: isSelected ? 32.0 : 28.0, // Only change icon size
+      child: SizedBox( // Use SizedBox to constrain size
+        width: 60, // Fixed width for each item
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              height: 32, // Reduced height
+              width: 32,  // Reduced width
+              alignment: Alignment.center,
+              child: Icon(
+                icon,
+                color: isSelected ? AppColors.primary : AppColors.navy,
+                size: isSelected ? 28.0 : 24.0, // Adjusted sizes
+              ),
             ),
-          ),
-          SizedBox(height: 4), // Add spacing to prevent overflow
-          if (isSelected)
-            Text(
-              label,
-              style: TextStyle(color: Colors.orange, fontSize: 12.0),
+            const SizedBox(height: 4),
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isSelected ? 1.0 : 0.0,
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 10.0, // Smaller font size
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
 }
 
 class HomePage extends StatefulWidget {
@@ -80,9 +101,9 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    Center(child: Text("Home Page")),
-    Center(child: Text("Scan Page")),
-    Center(child: Text("Profile Page")),
+    const Center(child: Text("Home Page")),
+    const Center(child: Text("Scan Page")),
+    const Center(child: Text("Profile Page")),
   ];
 
   void _onNavBarTap(int index) {
@@ -103,10 +124,9 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {},
         child: Icon(Icons.nightlight_round, color: Colors.black),
         backgroundColor: Colors.orange,
+        elevation: 2,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
-
-

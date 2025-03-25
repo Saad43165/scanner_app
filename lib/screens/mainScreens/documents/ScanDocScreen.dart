@@ -2,43 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import '../../../consts/bottomNavbar.dart'; // Replace with the correct import path for AnimatedNavBar
+import '../../../consts/bottomNavbar.dart';
 
 class ScanDocumentScreen extends StatefulWidget {
+  final Map<String, dynamic>? userData; // Accept userData as arguments
+
+  const ScanDocumentScreen({Key? key, this.userData}) : super(key: key);
+
   @override
   State<ScanDocumentScreen> createState() => _ScanDocumentScreenState();
 }
 
 class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
-  int _selectedIndex = 1; // Set the default index to 1 for the "Scan" page
-  File? _image; // Variable to store the selected image
-  final ImagePicker _picker = ImagePicker(); // Instance of ImagePicker
+  int _selectedIndex = 1;
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
 
-  // Function to pick an image from the gallery
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path); // Update state with the selected image
+        _image = File(pickedFile.path);
       });
     }
   }
 
   void _onNavBarTapped(int index) {
+    if (index == _selectedIndex) return;
+
     setState(() {
       _selectedIndex = index;
     });
 
-    // Handle navigation logic
+    final userData = widget.userData;
+
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/dashboard'); // Navigate to Home page
+        Navigator.pushReplacementNamed(
+          context,
+          '/dashboard',
+          arguments: userData,
+        );
         break;
       case 1:
-      // Stay on the current Scan page
-        break;
+        break; // Stay on the current Scan page
       case 2:
-        Navigator.pushReplacementNamed(context, '/profile'); // Navigate to Profile page
+        Navigator.pushReplacementNamed(
+          context,
+          '/profile',
+          arguments: userData,
+        );
         break;
     }
   }
@@ -53,13 +66,13 @@ class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
       appBar: AppBar(
         title: Text("Scan Document"),
         centerTitle: true,
-        backgroundColor: Color(0xFF303F9F), // Navy blue color for the app bar
+        backgroundColor: Color(0xFF303F9F),
       ),
       body: Column(
         children: [
           Expanded(
             child: Container(
-              color: Color(0xFF303F9F), // Navy blue background
+              color: Color(0xFF303F9F),
               child: Center(
                 child: Container(
                   width: 300,
@@ -72,11 +85,11 @@ class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
                     borderRadius: BorderRadius.circular(10),
                     child: _image != null
                         ? Image.file(
-                      _image!, // Display the selected image
+                      _image!,
                       fit: BoxFit.cover,
                     )
                         : Image.network(
-                      'https://via.placeholder.com/300x400', // Placeholder
+                      'https://via.placeholder.com/300x400',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -97,7 +110,7 @@ class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF303F9F), // Navy text color
+                    color: Color(0xFF303F9F),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -106,15 +119,19 @@ class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/medidetail');
-                      }, // Add functionality for documents if needed
+                        Navigator.pushNamed(
+                          context,
+                          '/medidetail',
+                          arguments: widget.userData,
+                        );
+                      },
                       child: Row(
                         children: [
                           Container(
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.orange, // Orange box for the icon
+                              color: Colors.orange,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(Icons.file_present, color: Colors.white),
@@ -132,20 +149,20 @@ class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: _pickImage, // Function to pick image
+                      onTap: _pickImage,
                       child: Row(
                         children: [
                           Container(
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.blue, // Orange box for the icon
+                              color: Colors.blue,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(Icons.photo_library, color: Colors.white),
                           ),
                           SizedBox(width: 8),
-                          const Text(
+                          Text(
                             "Gallery",
                             style: TextStyle(
                               fontSize: 16,

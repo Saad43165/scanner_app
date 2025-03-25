@@ -43,22 +43,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logout() {
-    Navigator.pushReplacementNamed(context, '/authOption');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            'Logout',
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+              color: AppColors.navy,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to logout?',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancel',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/authOption');
+              },
+              child: Text(
+                'Logout',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppColors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _editProfile(BuildContext context, Map<String, dynamic> args) {
+    Navigator.pushNamed(
+      context,
+      '/register',
+      arguments: args,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get any additional arguments passed directly
     final routeArgs = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
-    // Use passed arguments if available, otherwise use widget properties
     final fullName = routeArgs?['fullName'] ?? widget.fullName;
     final email = routeArgs?['email'] ?? widget.email;
     final phoneNumber = routeArgs?['phoneNumber'] ?? widget.phoneNumber;
     final userType = routeArgs?['userType'] ?? widget.userType;
 
+    final editArgs = {
+      'editMode': true,
+      'fullName': fullName,
+      'email': email,
+      'phoneNumber': phoneNumber.replaceAll('PK +92 ', ''),
+      'userType': userType,
+    };
+
     return Scaffold(
-      backgroundColor: AppColors.navy, // Using theme color
+      backgroundColor: AppColors.white,
       bottomNavigationBar: AnimatedNavBar(
         onTap: _onNavBarTapped,
         currentIndex: _selectedIndex,
@@ -67,115 +128,157 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           "Profile",
           style: Theme.of(context).textTheme.displayMedium?.copyWith(
-            color: AppColors.white,
+            color: AppColors.navy,
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.navy,
+        backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.white),
+          icon: Icon(Icons.arrow_back, color: AppColors.navy),
           onPressed: () => Navigator.pushReplacementNamed(context, '/dashboard'),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.edit, color: AppColors.white),
-            onPressed: () => Navigator.pushNamed(
-              context,
-              '/register',
-              arguments: {
-                'editMode': true,
-                'fullName': fullName,
-                'email': email,
-                'phoneNumber': phoneNumber.replaceAll('PK +92 ', ''),
-                'userType': userType,
-              },
-            ),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: AppColors.navy),
+            onSelected: (value) {
+              if (value == 'edit') {
+                _editProfile(context, editArgs);
+              } else if (value == 'logout') {
+                _logout();
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<String>(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, color: AppColors.primary),
+                      SizedBox(width: 8),
+                      Text('Edit Profile'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout, color: AppColors.primary),
+                      SizedBox(width: 8),
+                      Text('Logout'),
+                    ],
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              color: AppColors.navy,
-              child: Center(
-                child: Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          _buildProfileInfo('Full Name', fullName),
-                          Divider(color: Colors.grey[300]),
-                          _buildProfileInfo('Email', email),
-                          Divider(color: Colors.grey[300]),
-                          _buildProfileInfo('Phone Number', phoneNumber),
-                          Divider(color: Colors.grey[300]),
-                          _buildProfileInfo('User Type', userType),
-                        ],
-                      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          children: [
+            // Profile Avatar
+            Container(
+              margin: EdgeInsets.only(top: 30, bottom: 20),
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  CircleAvatar(
+                    radius: Responsive.width(context) * 0.15, // Reduced size
+                    backgroundColor: AppColors.primary.withOpacity(0.1),
+                    child: Icon(
+                      Icons.person,
+                      size: Responsive.width(context) * 0.15, // Reduced size
+                      color: AppColors.primary,
                     ),
                   ),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: _logout,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  Container(
+                    padding: EdgeInsets.all(6), // Reduced padding
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.camera_alt,
+                      size: 16, // Reduced size
+                      color: AppColors.white,
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                ),
-                child: Text(
-                  'LOG OUT',
-                  style: Theme.of(context).textTheme.labelLarge,
+                ],
+              ),
+            ),
+
+            // User Name
+            Text(
+              fullName.isNotEmpty ? fullName : 'No Name Provided',
+              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                color: AppColors.navy,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8),
+
+            // User Type Badge
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.primary, width: 1),
+              ),
+              child: Text(
+                userType.toUpperCase(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
                 ),
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 32),
+
+            // Profile Info Card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: [
+                    _buildProfileInfo('Email', email, Icons.email_outlined),
+                    Divider(height: 1, indent: 16, endIndent: 16),
+                    _buildProfileInfo('Phone', phoneNumber, Icons.phone_outlined),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfileInfo(String label, String value) {
+  Widget _buildProfileInfo(String label, String value, IconData icon) {
     final displayValue = value.isEmpty ? 'Not provided' : value;
-    final textColor = value.isEmpty ? Colors.grey : AppColors.navy;
+    final textColor = value.isEmpty ? Colors.grey[600] : AppColors.navy;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.navy.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: AppColors.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
-            child: Icon(
-              _getIconForLabel(label),
-              color: AppColors.navy,
-              size: 22,
-            ),
+            child: Icon(icon, color: AppColors.primary, size: 20),
           ),
           SizedBox(width: 16),
           Expanded(
@@ -184,7 +287,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 SizedBox(height: 4),
                 Text(
@@ -200,20 +306,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
-  }
-
-  IconData _getIconForLabel(String label) {
-    switch (label) {
-      case 'Full Name':
-        return Icons.person_outline;
-      case 'Email':
-        return Icons.email_outlined;
-      case 'Phone Number':
-        return Icons.phone_outlined;
-      case 'User Type':
-        return Icons.verified_user_outlined;
-      default:
-        return Icons.info_outline;
-    }
   }
 }
