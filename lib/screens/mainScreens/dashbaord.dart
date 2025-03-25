@@ -31,10 +31,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      bottomNavigationBar: AnimatedNavBar(
-        onTap: _onNavBarTapped, currentIndex: _selectedIndex,
-      ),
+
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -54,32 +53,38 @@ class _DashboardState extends State<Dashboard> {
           ),
         ],
       ),
+      bottomNavigationBar: AnimatedNavBar(
+        onTap: _onNavBarTapped, currentIndex: _selectedIndex,
+      ),
       body: Padding(
+
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 40),
-              Text(
-                'Dashboard Files',
-                style: GoogleFonts.inter(
-                  color: AppColors.navy,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 28,
+        child: Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 40),
+                Text(
+                  'Dashboard Files',
+                  style: GoogleFonts.inter(
+                    color: AppColors.navy,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 28,
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              _buildSearchBar(),
-              SizedBox(height: 20),
-              _buildSectionTitle('Recently'),
-              _buildCategoryGrid(),
-              SizedBox(height: 20),
-              _buildSectionTitle('Scanned today'),
-              Text('January, 11', style: TextStyle(color: Colors.grey.shade400)),
-              SizedBox(height: 10),
-              _buildScannedToday(),
-            ],
+                SizedBox(height: 20),
+                _buildSearchBar(),
+                SizedBox(height: 20),
+                _buildSectionTitle('Recently'),
+                _buildCategoryGrid(),
+                SizedBox(height: 20),
+                _buildSectionTitle('Scanned today'),
+                Text('January, 11', style: TextStyle(color: Colors.grey.shade400)),
+                SizedBox(height: 10),
+                _buildScannedToday(),
+              ],
+            ),
           ),
         ),
       ),

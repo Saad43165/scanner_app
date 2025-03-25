@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medi_vision_app/consts/themes.dart';
 
 class AnimatedNavBar extends StatefulWidget {
   final int currentIndex;
@@ -21,9 +22,9 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
       shape: CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: Container(
-        height: 60.0,
+        height: 100.0,
         decoration: BoxDecoration(
-          color: Colors.grey[900],
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),
         child: Row(
@@ -48,18 +49,16 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
           AnimatedContainer(
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            height: isSelected ? 40 : 20,
-            width: isSelected ? 40 : 20,
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.orange : Colors.transparent,
-              shape: BoxShape.circle,
-            ),
+            height: 40,  // Keep height fixed
+            width: 40,   // Keep width fixed
+            alignment: Alignment.center,
             child: Icon(
               icon,
-              color: isSelected ? Colors.black : Colors.white,
-              size: 24.0,
+              color: isSelected ? Colors.black : AppColors.navy,
+              size: isSelected ? 32.0 : 28.0, // Only change icon size
             ),
           ),
+          SizedBox(height: 4), // Add spacing to prevent overflow
           if (isSelected)
             Text(
               label,
@@ -69,6 +68,7 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
       ),
     );
   }
+
 }
 
 class HomePage extends StatefulWidget {
