@@ -5,35 +5,64 @@ import '../../consts/bottomNavbar.dart';
 import '../../consts/themes.dart';
 
 class Dashboard extends StatefulWidget {
+  final Map<String, dynamic>? userData;
+
+  const Dashboard({Key? key, this.userData}) : super(key: key);
+
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
+  late Map<String, dynamic> _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _userData = widget.userData ?? {
+      'fullName': '',
+      'email': '',
+      'phoneNumber': '',
+      'userType': 'Normal User'
+    };
+  }
 
   void _onNavBarTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/dashboard');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/dashboard',
+              (route) => false,
+          arguments: _userData,
+        );
         break;
       case 1:
-        Navigator.pushReplacementNamed(context, '/scandocscreen');
+        Navigator.pushReplacementNamed(
+          context,
+          '/scandocscreen',
+          arguments: _userData,
+        );
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/profile');
+        Navigator.pushReplacementNamed(
+          context,
+          '/profile',
+          arguments: _userData,
+        );
         break;
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -54,10 +83,10 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
       bottomNavigationBar: AnimatedNavBar(
-        onTap: _onNavBarTapped, currentIndex: _selectedIndex,
+        onTap: _onNavBarTapped,
+        currentIndex: _selectedIndex,
       ),
       body: Padding(
-
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Expanded(
           child: SingleChildScrollView(
@@ -80,7 +109,8 @@ class _DashboardState extends State<Dashboard> {
                 _buildCategoryGrid(),
                 SizedBox(height: 20),
                 _buildSectionTitle('Scanned today'),
-                Text('January, 11', style: TextStyle(color: Colors.grey.shade400)),
+                Text('January, 11',
+                    style: TextStyle(color: Colors.grey.shade400)),
                 SizedBox(height: 10),
                 _buildScannedToday(),
               ],
@@ -128,15 +158,18 @@ class _DashboardState extends State<Dashboard> {
         childAspectRatio: 2.5,
       ),
       children: [
-        _buildCategoryCard('Personal', 120, Icons.person, Colors.purple, '/personal'),
-        _buildCategoryCard('Document', 58, Icons.insert_drive_file, Colors.red, '/document'),
+        _buildCategoryCard(
+            'Personal', 120, Icons.person, Colors.purple, '/personal'),
+        _buildCategoryCard(
+            'Document', 58, Icons.insert_drive_file, Colors.red, '/document'),
         _buildCategoryCard('Files', 41, Icons.folder, Colors.green, '/files'),
         _buildCategoryCard('Gallery', 46, Icons.image, Colors.blue, '/gallery'),
       ],
     );
   }
 
-  Widget _buildCategoryCard(String title, int count, IconData icon, Color color, String route) {
+  Widget _buildCategoryCard(
+      String title, int count, IconData icon, Color color, String route) {
     return InkWell(
       onTap: () => Navigator.pushNamed(context, route),
       child: Container(
@@ -193,7 +226,9 @@ class _DashboardState extends State<Dashboard> {
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('13 images uploaded', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.navy)),
+              Text('13 images uploaded',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: AppColors.navy)),
               Icon(Icons.expand_more, color: Colors.blue),
             ],
           ),
@@ -214,7 +249,10 @@ class _DashboardState extends State<Dashboard> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
-                      child: Text('+11 photos', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text('+11 photos',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
