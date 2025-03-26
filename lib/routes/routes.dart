@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
 import '../screens/authScreens/forgetpassword.dart';
 import '../screens/authScreens/loginScreen.dart';
 import '../screens/authScreens/registerScreen.dart';
-import '../screens/mainScreens/ProfileScreen/profilescreen.dart';
-import '../screens/mainScreens/dashbaord.dart';
-import '../screens/mainScreens/documents/MedicineUI.dart';
+import '../screens/mainScreens/DashboardScreen/dashbaord.dart' show Dashboard;
+import '../screens/mainScreens/ProfileScreen/profile_screen.dart';
+import '../screens/mainScreens/documents/MedicineScreen/medicine_scan_screen.dart';
 import '../screens/mainScreens/documents/ScanDocScreen.dart';
 import '../screens/mainScreens/documents/docMainScreen.dart';
 import '../screens/splashscreens/auth_options_screen.dart';

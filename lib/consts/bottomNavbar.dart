@@ -12,21 +12,20 @@ class AnimatedNavBar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AnimatedNavBarState createState() => _AnimatedNavBarState();
+  State<AnimatedNavBar> createState() => _AnimatedNavBarState();
 }
 
 class _AnimatedNavBarState extends State<AnimatedNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8.0,
+      elevation: 4,
+      padding: EdgeInsets.zero,
       child: Container(
-        height: 40.0, // Reduced height to prevent overflow
-        padding: const EdgeInsets.symmetric(horizontal: 10.0), // Added horizontal padding
+        height: 70.0,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -39,10 +38,8 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.home, 0, "Home"),
-            const SizedBox(width: 48), // Space for FAB
+            _buildNavItem(Icons.home_filled, 0, "Home"),
             _buildNavItem(Icons.qr_code_scanner, 1, "Scan"),
-            const SizedBox(width: 48), // Space for FAB
             _buildNavItem(Icons.person, 2, "Profile"),
           ],
         ),
@@ -54,79 +51,37 @@ class _AnimatedNavBarState extends State<AnimatedNavBar> {
     bool isSelected = widget.currentIndex == index;
     return GestureDetector(
       onTap: () => widget.onTap(index),
-      child: SizedBox( // Use SizedBox to constrain size
-        width: 60, // Fixed width for each item
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              height: 32, // Reduced height
-              width: 32,  // Reduced width
-              alignment: Alignment.center,
-              child: Icon(
-                icon,
-                color: isSelected ? AppColors.primary : AppColors.navy,
-                size: isSelected ? 28.0 : 24.0, // Adjusted sizes
-              ),
+            Icon(
+              icon,
+              color: isSelected ? AppColors.primary : AppColors.textDark,
+              size: 28.0,
             ),
-            const SizedBox(height: 4),
-            AnimatedOpacity(
+            AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              opacity: isSelected ? 1.0 : 0.0,
-              child: Text(
+              child: isSelected
+                  ? Text(
                 label,
+                key: ValueKey(label),
                 style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 10.0, // Smaller font size
-                  fontWeight: FontWeight.w500,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w600,
                 ),
-              ),
+              )
+                  : const SizedBox(height: 0),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    const Center(child: Text("Home Page")),
-    const Center(child: Text("Scan Page")),
-    const Center(child: Text("Profile Page")),
-  ];
-
-  void _onNavBarTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: AnimatedNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavBarTap,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.nightlight_round, color: Colors.black),
-        backgroundColor: Colors.orange,
-        elevation: 2,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

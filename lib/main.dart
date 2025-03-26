@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:medi_vision_app/routes/routes.dart';
-
-import 'consts/themes.dart';
+import 'package:medi_vision_app/consts/themes.dart';
+import 'package:medi_vision_app/screens/menu/notification_provider.dart'; // Make sure to import your NotificationProvider
 
 void main() {
   runApp(const MyApp());
@@ -10,16 +11,20 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.Splash, // Set the initial route
-      onGenerateRoute: AppRoutes.generateRoute,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        // Add other providers here if needed
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: AppTheme.lightTheme,
+        initialRoute: AppRoutes.Splash,
+        onGenerateRoute: AppRoutes.generateRoute,
+      ),
     );
   }
 }
-

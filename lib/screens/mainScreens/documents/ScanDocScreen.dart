@@ -14,6 +14,7 @@ class ScanDocumentScreen extends StatefulWidget {
 }
 
 class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
+
   int _selectedIndex = 1;
   File? _image;
   final ImagePicker _picker = ImagePicker();
@@ -59,12 +60,14 @@ class _ScanDocumentScreenState extends State<ScanDocumentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       bottomNavigationBar: AnimatedNavBar(
         onTap: _onNavBarTapped,
         currentIndex: _selectedIndex,
       ),
       appBar: AppBar(
-        title: Text("Scan Document"),
+        automaticallyImplyLeading: false,
+        title: Text("Scan Document",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,),),
         centerTitle: true,
         backgroundColor: Color(0xFF303F9F),
       ),
