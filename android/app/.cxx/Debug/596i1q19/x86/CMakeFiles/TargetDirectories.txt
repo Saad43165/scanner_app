@@ -1,0 +1,2 @@
+C:/Users/PC/Downloads/fypapp/fypapp/medi_vision_app/android/app/.cxx/Debug/596i1q19/x86/CMakeFiles/edit_cache.dir
+C:/Users/PC/Downloads/fypapp/fypapp/medi_vision_app/android/app/.cxx/Debug/596i1q19/x86/CMakeFiles/rebuild_cache.dir
